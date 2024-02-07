@@ -1,0 +1,4 @@
+loguru
+icecream
+typing_extensions
+requests
