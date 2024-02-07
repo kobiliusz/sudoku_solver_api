@@ -2,3 +2,6 @@ loguru
 icecream
 typing_extensions
 requests
+fastapi
+pydantic
+uvicorn
