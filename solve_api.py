@@ -11,15 +11,19 @@ logger.add(sys.stderr, level='INFO')
 app = FastAPI()
 
 
-class BoardData(BaseModel):
+class PuzzleData(BaseModel):
     puzzle: SudokuBoard
 
 
+class SolutionData(BaseModel):
+    solution: SudokuBoard
+
+
 @app.post('/solve')
-async def solve(board: BoardData, request: Request):
+async def solve(board: PuzzleData, request: Request) -> SolutionData:
     logger.info('New request from {}', request.client.host)
     try:
-        return solve_sudoku(board.puzzle)
+        return SolutionData(solution=solve_sudoku(board.puzzle))
 
     except UnsolvableSudoku:
         logger.warning('Request from {} contained unsolvable puzzle!', request.client.host)
