@@ -4,7 +4,8 @@ from typing_extensions import Annotated
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from loguru import logger
-
+import uuid
+from time import perf_counter_ns
 
 SudokuIndex = Annotated[int, Ge(0), Le(8)]
 
@@ -147,23 +148,25 @@ class SolvedIteration(Exception):
     pass
 
 
-class UnsolvablePuzzle(Exception):
+class UnsolvableSudoku(Exception):
     pass
 
 
 def solve_sudoku(init_board: SudokuBoard) -> SudokuBoard:
+    start_ns = perf_counter_ns()
+    board_id = uuid.uuid4()
     snapshots: List[SudokuSnapshot] = []
     board: SudokuBoard = copy_board(init_board)
-    logger.info("Starting solving board:\n{}", board)
+    logger.info("Starting solving board id {}: {}", board_id, board)
     groups: List[SudokuGroup] = init_groups(board)
     checked: BoolSudokuBoard = None
 
     while True:
         try:
-            logger.debug("Next iteration:\n{}", board)
+            logger.debug("Next iteration id {}: {}", board_id, board)
             groups = sorted(groups, key=missing_vals_key)
             if len(groups[-1].missing_vals()) == 0:
-                logger.info("Board solved:\n{}", board)
+                logger.info("Board id {} solved in {} ms: {}", board_id, (perf_counter_ns() - start_ns) / 1e6, board)
                 return board
             min_fits = 10
             min_fits_coords: SudokuCoords = None
@@ -180,9 +183,9 @@ def solve_sudoku(init_board: SudokuBoard) -> SudokuBoard:
 
                     if len(moves) == 0:
                         if len(snapshots) == 0:
-                            raise UnsolvablePuzzle
+                            raise UnsolvableSudoku
                         else:
-                            logger.info("Restoring board from snapshot...")
+                            logger.debug("Restoring board {} from snapshot...", board_id)
                             snap = snapshots[-1]
                             next_move = snap.moves.pop()
                             if len(snap.moves) == 0:
@@ -203,7 +206,7 @@ def solve_sudoku(init_board: SudokuBoard) -> SudokuBoard:
 
                     checked[empty_field.row][empty_field.col] = True
 
-            logger.info("No obvious solution, creating snapshot...")
+            logger.debug("No obvious solution, creating snapshot of {}...", board_id)
             next_move = min_fits_moves.pop()
             snapshots.append(SudokuSnapshot(board, min_fits_moves, min_fits_coords))
             board[min_fits_coords.row][min_fits_coords.col] = next_move
