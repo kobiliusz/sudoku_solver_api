@@ -52,7 +52,8 @@ class SudokuGroup(ABC):
         self.board = sud_board
         self.group_index = group_idx
 
-        if len(self.values()) != len(set(self.values())):
+        vals = [i for i in self.values() if i != 0]
+        if len(vals) != len(set(vals)):
             raise UnsolvableSudoku
 
     @abstractmethod
