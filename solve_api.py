@@ -1,6 +1,9 @@
 import sys
 from solve import solve_sudoku, SudokuBoard, UnsolvableSudoku
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel
 from loguru import logger
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,14 +13,15 @@ logger.remove()
 logger.add("log/api_log", level='INFO', rotation="500 MB")
 
 app = FastAPI()
+app.mount("/assets", StaticFiles(directory="frontend/assets"), name="sudoku_solver_frontend")
 
-allowed_origins = [
-    "http://localhost:3000",
+origins = [
+    "*"
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=[origins],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -30,6 +34,23 @@ class PuzzleData(BaseModel):
 
 class SolutionData(BaseModel):
     solution: SudokuBoard
+
+
+templates = Jinja2Templates(directory="frontend")
+
+
+@app.get("/", response_class=HTMLResponse)
+async def read_item(request: Request):
+    return templates.TemplateResponse(
+        request=request, name="index.html", context={}
+    )
+
+
+@app.get("/favicon.ico", response_class=FileResponse)
+async def read_item(request: Request):
+    return templates.TemplateResponse(
+        request=request, name="favicon.ico", context={}
+    )
 
 
 # noinspection PyBroadException
