@@ -52,6 +52,9 @@ class SudokuGroup(ABC):
         self.board = sud_board
         self.group_index = group_idx
 
+        if len(self.values()) != len(set(self.values())):
+            raise UnsolvableSudoku
+
     @abstractmethod
     def idx_to_coords(self, idx: SudokuIndex) -> SudokuCoords:
         pass
