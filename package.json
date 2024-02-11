@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "heroku-prebuild": "git submodule update --init --recursive && cd frontend && npm install",
-    "heroku-postbuild": "cd frontend && npm run build"
+    "heroku-prebuild": "cd frontend_src && npm install",
+    "heroku-postbuild": "cd frontend_src && npm run build"
   }
 }
