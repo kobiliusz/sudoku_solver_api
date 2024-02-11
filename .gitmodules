@@ -1,0 +1,3 @@
+[submodule "frontend_src"]
+	path = frontend_src
+	url = https://github.com/kobiliusz/sudoku_solver_frontend.git
