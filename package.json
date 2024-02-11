@@ -2,6 +2,6 @@
   "scripts": {
     "start": "cd frontend_src && npm start",
     "build": "cd frontend_src && npm run build",
-    "postinstall": "cd frontend_src && npm install"
+    "install": "cd frontend_src && npm install"
   }
 }
