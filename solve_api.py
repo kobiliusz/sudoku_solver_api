@@ -23,7 +23,7 @@ class HTTPSRedirectMiddleware(BaseHTTPMiddleware):
         return await call_next(request)
 
 
-logger.add(sys.stderr, level='INFO', rotation="500 MB")
+logger.add(sys.stderr, level='INFO')
 
 app = FastAPI()
 app.mount("/assets", StaticFiles(directory="frontend/assets"), name="sudoku_solver_frontend")
