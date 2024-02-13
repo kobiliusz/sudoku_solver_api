@@ -23,6 +23,7 @@ class HTTPSRedirectMiddleware(BaseHTTPMiddleware):
         return await call_next(request)
 
 
+logger.remove()
 logger.add(sys.stderr, level='INFO')
 
 app = FastAPI()
