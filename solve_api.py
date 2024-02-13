@@ -7,6 +7,19 @@ from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel
 from loguru import logger
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
+from starlette.responses import RedirectResponse
+
+
+class HTTPSRedirectMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        # Check if the request is HTTPS or running locally
+        if request.url.scheme != "https" and request.headers.get("X-Forwarded-Proto") != "https":
+            url = request.url.replace(scheme="https", port=443)
+            return RedirectResponse(url=url, status_code=307)
+        return await call_next(request)
+
 
 logger.remove()
 logger.add("log/api_log", level='INFO', rotation="500 MB")
@@ -18,6 +31,7 @@ origins = [
     "*"
 ]
 
+app.add_middleware(HTTPSRedirectMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[origins],
