@@ -8,7 +8,6 @@ from pydantic import BaseModel
 from loguru import logger
 from fastapi.middleware.cors import CORSMiddleware
 
-
 logger.remove()
 logger.add("log/api_log", level='INFO', rotation="500 MB")
 
