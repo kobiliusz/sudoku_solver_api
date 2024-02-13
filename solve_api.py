@@ -10,6 +10,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
+import os
+import time
 
 
 class HTTPSRedirectMiddleware(BaseHTTPMiddleware):
@@ -21,8 +23,7 @@ class HTTPSRedirectMiddleware(BaseHTTPMiddleware):
         return await call_next(request)
 
 
-logger.remove()
-logger.add("log/api_log", level='INFO', rotation="500 MB")
+logger.add(sys.stderr, level='INFO', rotation="500 MB")
 
 app = FastAPI()
 app.mount("/assets", StaticFiles(directory="frontend/assets"), name="sudoku_solver_frontend")
@@ -31,10 +32,12 @@ origins = [
     "*"
 ]
 
-app.add_middleware(HTTPSRedirectMiddleware)
+if os.environ.get('SUDOKU_SOLVER_MODE', 'dev') == 'prod':
+    app.add_middleware(HTTPSRedirectMiddleware)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[origins],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

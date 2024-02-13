@@ -2,3 +2,4 @@
 .idea
 log
 frontend
+__pycache__
