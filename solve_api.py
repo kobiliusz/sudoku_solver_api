@@ -63,11 +63,9 @@ async def return_index(request: Request):
     )
 
 
-@app.get("/favicon.ico", response_class=FileResponse)
-async def return_favicon(request: Request):
-    return templates.TemplateResponse(
-        request=request, name="favicon.ico", context={}
-    )
+@app.get('/favicon.ico', include_in_schema=False)
+async def favicon():
+    return FileResponse('frontend/favicon.ico')
 
 
 # noinspection PyBroadException
