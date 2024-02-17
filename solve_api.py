@@ -57,14 +57,14 @@ templates = Jinja2Templates(directory="frontend")
 
 
 @app.get("/", response_class=HTMLResponse)
-async def read_item(request: Request):
+async def return_index(request: Request):
     return templates.TemplateResponse(
         request=request, name="index.html", context={}
     )
 
 
 @app.get("/favicon.ico", response_class=FileResponse)
-async def read_item(request: Request):
+async def return_favicon(request: Request):
     return templates.TemplateResponse(
         request=request, name="favicon.ico", context={}
     )
