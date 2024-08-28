@@ -1,0 +1,25 @@
+steps:
+  # Install dependencies for the frontend
+  - name: 'node:17'
+    entrypoint: 'npm'
+    args: ['install']
+    dir: './frontend-src'
+
+  # Build the frontend
+  - name: 'node:17'
+    entrypoint: 'npm'
+    args: ['run', 'build']
+    dir: './frontend-src'
+
+  # Install Python dependencies
+  - name: 'python:3.10'
+    entrypoint: 'pip'
+    args: ['install', '-r', 'requirements.txt']
+
+  # Deploy to Google App Engine
+  - name: 'gcr.io/google-appengine/exec-wrapper'
+    args: ['gcloud', 'app', 'deploy']
+    env:
+      - 'GAE_APP_ENGINE_APIS=TRUE'
+
+timeout: '900s'
