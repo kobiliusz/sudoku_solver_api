@@ -1,12 +1,12 @@
 steps:
   # Install dependencies for the frontend
-  - name: 'node:17'
+  - name: 'node:19'
     entrypoint: 'npm'
     args: ['install']
     dir: './frontend-src'
 
   # Build the frontend
-  - name: 'node:17'
+  - name: 'node:19'
     entrypoint: 'npm'
     args: ['run', 'build']
     dir: './frontend-src'
